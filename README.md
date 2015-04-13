@@ -8,32 +8,31 @@ If the wordament board looks as follows:
 
 
 
-| **o** | **l** | **h** | **g** |
+| **i** | **d** | **o** | **o** |
 | ----- | ----- | ----- | ----- |
-| **t** | **o** | **o** | **p** |
-| **t** | **r** | **d** | **s** |
-| **s** | **i** | **n** | **t** |
+| **a** | **l** | **e** | **r** |
+| **l** | **t** | **e** | **n** |
+| **a** | **d** | **ss** | **m** |
 
 You can solve it using:
 
 ```ruby
 require 'wordament'
 game = Wordament::Wordament.new
-game.solve('olhg toop trds sint')
+game.solve('idoo aler lten ad(ss)m')
 ```
-Resulting in something like this:
+Resulting in 393 words:
 
-["ooh", "lot", "lotto", "loo", "loot", "loots", "loop", "loops", "lots", "lord", "lords", "log", "lop", "lost", "hoot", "hot", "hotrod", "hoop", "hoops", "hood", "hoods", "horn", "horns", "hod", "hog", "hoots", "hop", "hops", "host", "ghost", "goo", "good", "goods", "god", "gods", "too", "tool", "toot", "tot", "tots", "torts", "tori", "torn", "troop", "troops", "trot", "trots", "trod", "oops", "odin", "photo", "polo", "pool", "pooh", "poor", "port", "ports", "porn", "porns", "pod", "pods", "post", "tiro", "tin", "tins", "tint", "tints", "roo", "root", "rot", "roost", "rots", "rod", "rods", "roots", "rid", "rids", "rind", "rinds", "dolt", "doh", "dot", "door", "doors", "dots", "dor", "dog", "drool", "droop", "droops", "drop", "drops", "ditto", "dirt", "dirts", "distort", "din", "dint", "dints", "solo", "soh", "soot", "soots", "sop", "sort", "sorts", "sod", "spool", "spoor", "sport", "sports", "snits", "stool", "stoop", "stoops", "stood", "strop", "strops", "stir", "stint", "stints", "sit", "sir", "sin", "sins", "its", "idol", "ids", "indoor", "indoors", "ins", "nit", "nits"]
+["ido", "idol", "idola", "idolater", "idolet", "ida", "idle", "idler", "idleness", "idled", "ide", "ideo", "ideta", "ilo", "ile", "ill", "dial", "dilo", "dilate", "dilater", "dilated", "dill", "doo", "door", "doored", "doorn", "doli", "dolia", "dola", "dole", "doll", "dolt", "doled", "doless", "doe", "doer", "doen", "dor", "dore", "doree", "dorn", "dail", "dali", "dalo", "dale", "daler", "dalet", "dalt", "dalteen", "daled", "dalle", "date", "dateless", "dater", "dated", "data", "datal", "dataller", "dle", "deli", "deloo", "delate", "delater", "delated", "dell", "della", "delt", "delta", "deltal", "dele", "deled", "dero", "dere", "dered", "dern", "derned", "detail", "detailer", "detailed", "deter", "detd", "dee", "deer", "deet", "deen", "deed", "deess", "deem", "den", "dene", "denet", "oda", "odal", "odaller", "ode", "odel", "odell", "odelet", "oder", "oor", "olid", "old", "older", "olden", "oldened", "ola", "oleo", "olla", "oelet", "oer", "ore", "ored", "oreo", "aid", "aidless", "aide", "aider", "ail", "aile", "ailed", "aillt", "ado", "ador", "adore", "adored", "adorn", "adorned", "adlet", "adless", "ade", "adet", "adeem", "aden", "alder", "aldern", "alden", "alo", "alod", "aloe", "aloed", "ale", "alee", "alen", "all", "alter", "altered", "altern", "alterne", "alem", "allo", "allod", "alloo", "aller", "allen", "allene", "ala", "alate", "alated", "alatern", "atli", "atle", "atlee", "ate", "ated", "atelo", "lid", "lido", "lod", "lode", "loden", "loo", "loor", "loe", "lor", "loro", "lore", "lored", "loren", "lorn", "lai", "laid", "lad", "lade", "lader", "laden", "ladened", "late", "lated", "later", "lateen", "laten", "latened", "lateness", "lata", "led", "leda", "leo", "ler", "lere", "lered", "let", "lete", "lee", "leer", "leet", "leed", "lene", "lld", "less", "lessn", "lem", "edo", "eole", "eli", "eliad", "eld", "elod", "ela", "elate", "elater", "elated", "ell", "elt", "erolia", "ere", "ered", "erne", "erned", "eta", "eten", "eel", "eer", "een", "ene", "ened", "rod", "rodlet", "rodless", "rode", "rodeo", "roo", "role", "roleo", "roll", "roe", "rood", "roodle", "rool", "red", "redia", "redial", "redilate", "redilated", "redo", "redate", "redated", "relaid", "relate", "related", "relata", "relet", "retail", "retailed", "retal", "retled", "rete", "retell", "retem", "ree", "reel", "reet", "reen", "reed", "reem", "renet", "relide", "relade", "reladen", "redtail", "ladle", "ladler", "ladled", "lalo", "ller", "tai", "tail", "tailor", "tailored", "tailoress", "tailed", "tailer", "tad", "tade", "tal", "tali", "tald", "tale", "taled", "taler", "tall", "talli", "taller", "tallero", "tala", "tlo", "ted", "teli", "telia", "telial", "teld", "tela", "tell", "tern", "terne", "terned", "tee", "teel", "teen", "teed", "teem", "ten", "tene", "teredo", "tem", "tss", "elide", "elder", "eldern", "erode", "ess", "ned", "neo", "neolater", "nerodia", "nerol", "neroli", "net", "netless", "nete", "neter", "neeld", "neela", "neet", "need", "neem", "ness", "alai", "allodia", "adelaide", "dess", "dem", "dalai", "sse", "ssed", "mel", "melia", "meld", "melder", "melodia", "melodial", "mela", "mell", "mellate", "melt", "melted", "melter", "mee", "meed", "meer", "meet", "mero", "mere", "mered", "merel", "merell", "met", "meta", "metad", "metal", "metaler", "metall", "metallide", "metaller", "mete", "meted", "meteor", "metel", "meter", "men", "mene", "mened", "medal", "mess"]
 
 Notice that the words are ordered by the corner letter onwards.
+Solving this took 1.9 sec, on an MacBook Pro with Intel Core i7@2.3 ghz
+
 
 *TODO: There are still some things missing that need improvement:*
 
-* Add more words mn the dictionary.
-* Add support for or tiles
-* Add support for ending tiles
-* Add support for starting tiles
-* Add support for multi letter tiles
+* The dictionary is now way too large (thanks [scowl](http://wordlist.aspell.net/)!), it finds more words than wordament will actually accept.
+* It can probably made faster.
 
 ## Installation
 
