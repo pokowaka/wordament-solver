@@ -29,10 +29,53 @@ Notice that the words are ordered by the corner letter onwards.
 Solving this took 1.9 sec, on an MacBook Pro with Intel Core i7@2.3 ghz
 
 
-*TODO: There are still some things missing that need improvement:*
+* The dictionary is now way too large (thanks
+  [scowl](http://wordlist.aspell.net/)!), it finds more words than
+wordament will actually accept. I mean what does
+[telial](http://www.thefreedictionary.com/telial) even mean?
 
-* The dictionary is now way too large (thanks [scowl](http://wordlist.aspell.net/)!), it finds more words than wordament will actually accept.
-* It can probably made faster.
+## On the running complexity
+
+The wordament problem can be understood as a graph where each vertex is
+a letter. Where edges exist between neighboring nodes. A word is just a
+path between a starting vertex and an ending vertex.
+`
+If every path would be valid (that is ever path is a word in the
+dictionary), then the problem is reduced to finding every path between
+every pair of vertices in the graph. Unfortunately the number of these
+paths is exponential. Even counting the number of paths is a [Sharp
+P](https://en.wikipedia.org/wiki/Sharp-P) [hard
+problem](http://jgaa.info/accepted/2007/RobertsKroese2007.11.1.pdf).
+
+Luckilly we don't have to enumerate all the paths as we can restrict the
+number of valid paths in our graph significantly. By making use of a
+[trie](https://en.wikipedia.org/wiki/Trie) data structure.
+
+We load the entire dictionary into a a trie. The following will hold for
+our trie:
+
+- Every node hold a letter, and a value indicating whether this path to
+  the root is a valid word.
+- A path to a lead node is always a valid word.
+
+We can now use our trie to navigate through our graph:
+
+- A path s ~~> t is valid iff the path occurs in the trie.
+- If the path s ~~> t is valid, then the path s ~~> t ~> t' is valid iff
+  s ~~> t ~> t' occurs in the trie.
+
+The above gives enough infomation to enumerate all possible paths in our
+wordament graph We simply start with the first letter, and trie the
+neighbors if our trie allows this!
+
+This still leaves the problem NP-hard, because in the worst case
+scenario every possible path is also a word in the dictionary. However
+in practical terms this is very, very unlikely. Many paths in the graph
+are invalid since they will not form valid words.
+
+For example in the matrix above you will see that m-n is a possible
+path, however there are no word in the dictionary that contain m
+followed by n. Hence those paths will not be explored.
 
 ## Installation
 
