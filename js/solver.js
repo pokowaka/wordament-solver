@@ -1,6 +1,7 @@
 /**
  * Trie and WordamentSolver classes for client-side board solving.
  * Exposes multiple algorithms (Trie, Binary Search, and Brute Force) for benchmarking.
+ * Optimized to perform O(1) state transitions during DFS.
  */
 
 class Trie {
@@ -96,10 +97,6 @@ class WordamentSolver {
         return total;
     }
 
-    pathToStr(matrix, path) {
-        return path.map(([r, c]) => this.getChars(matrix, r, c)).join('');
-    }
-
     isSeen(path, row, col) {
         return path.some(([r, c]) => r === row && c === col);
     }
@@ -138,41 +135,48 @@ class WordamentSolver {
     }
 
     /**
-     * Algorithm 1: Trie-Pruned DFS
+     * Algorithm 1: Trie-Pruned DFS (O(1) Trie Transitions)
      */
-    findWordsTrie(matrix, path, row, col) {
+    findWordsTrie(matrix, path, row, col, trieNode, accumulatedStr) {
         this.stats.pathsExplored++;
-        const strSoFar = this.pathToStr(matrix, path);
 
         if (row < 0 || row >= matrix.length ||
             col < 0 || col >= matrix[row].length ||
-            this.isSeen(path, row, col) ||
-            !this.trie.isPrefix(strSoFar)) {
+            this.isSeen(path, row, col)) {
             return [];
         }
 
         const char = matrix[row][col];
 
+        // Suffix/Prefix rules
         if (char.endsWith('-)') && path.length > 0) {
-            return [];
+            return []; // Prefix tile can only be first
         }
 
-        const newPath = [...path, [row, col]];
-        const newStr = strSoFar + this.getChars(matrix, row, col);
+        const suffix = this.getChars(matrix, row, col);
+        
+        // Trie transition
+        let nextNode = trieNode;
+        for (let ch of suffix) {
+            nextNode = nextNode[ch];
+            if (!nextNode) return []; // Prune!
+        }
 
+        const newStr = accumulatedStr + suffix;
         let words = [];
-        if (this.trie.hasWord(newStr)) {
+        if (nextNode['$'] === true) {
             words.push(newStr);
         }
 
         if (char.startsWith('(-')) {
-            return words;
+            return words; // Suffix tile must be last
         }
 
+        const newPath = [...path, [row, col]];
         for (let rw = -1; rw <= 1; rw++) {
             for (let cl = -1; cl <= 1; cl++) {
                 if (rw === 0 && cl === 0) continue;
-                words.push(...this.findWordsTrie(matrix, newPath, row + rw, col + cl));
+                words.push(...this.findWordsTrie(matrix, newPath, row + rw, col + cl, nextNode, newStr));
             }
         }
 
@@ -180,16 +184,14 @@ class WordamentSolver {
     }
 
     /**
-     * Algorithm 2: Binary Search Pruned DFS
+     * Algorithm 2: Binary Search Pruned DFS (Optimized string accumulation)
      */
-    findWordsBinarySearch(matrix, path, row, col) {
+    findWordsBinarySearch(matrix, path, row, col, accumulatedStr) {
         this.stats.pathsExplored++;
-        const strSoFar = this.pathToStr(matrix, path);
 
         if (row < 0 || row >= matrix.length ||
             col < 0 || col >= matrix[row].length ||
-            this.isSeen(path, row, col) ||
-            !this.binarySearchPrefix(strSoFar)) {
+            this.isSeen(path, row, col)) {
             return [];
         }
 
@@ -199,8 +201,12 @@ class WordamentSolver {
             return [];
         }
 
-        const newPath = [...path, [row, col]];
-        const newStr = strSoFar + this.getChars(matrix, row, col);
+        const suffix = this.getChars(matrix, row, col);
+        const newStr = accumulatedStr + suffix;
+
+        if (!this.binarySearchPrefix(newStr)) {
+            return []; // Prune!
+        }
 
         let words = [];
         if (this.wordsSet.has(newStr)) {
@@ -211,10 +217,11 @@ class WordamentSolver {
             return words;
         }
 
+        const newPath = [...path, [row, col]];
         for (let rw = -1; rw <= 1; rw++) {
             for (let cl = -1; cl <= 1; cl++) {
                 if (rw === 0 && cl === 0) continue;
-                words.push(...this.findWordsBinarySearch(matrix, newPath, row + rw, col + cl));
+                words.push(...this.findWordsBinarySearch(matrix, newPath, row + rw, col + cl, newStr));
             }
         }
 
@@ -222,9 +229,9 @@ class WordamentSolver {
     }
 
     /**
-     * Algorithm 3: Brute Force DFS (No pruning, safety timeout)
+     * Algorithm 3: Brute Force DFS (No pruning, optimized string accumulation)
      */
-    findWordsBruteForce(matrix, path, row, col, startTime) {
+    findWordsBruteForce(matrix, path, row, col, accumulatedStr, startTime) {
         this.stats.pathsExplored++;
 
         // Safety timeout to prevent browser tab freeze (abort after 5 seconds)
@@ -245,8 +252,8 @@ class WordamentSolver {
             return [];
         }
 
-        const newPath = [...path, [row, col]];
-        const newStr = this.pathToStr(matrix, newPath);
+        const suffix = this.getChars(matrix, row, col);
+        const newStr = accumulatedStr + suffix;
 
         let words = [];
         if (newStr.length >= 3 && this.wordsSet.has(newStr)) {
@@ -257,10 +264,11 @@ class WordamentSolver {
             return words;
         }
 
+        const newPath = [...path, [row, col]];
         for (let rw = -1; rw <= 1; rw++) {
             for (let cl = -1; cl <= 1; cl++) {
                 if (rw === 0 && cl === 0) continue;
-                words.push(...this.findWordsBruteForce(matrix, newPath, row + rw, col + cl, startTime));
+                words.push(...this.findWordsBruteForce(matrix, newPath, row + rw, col + cl, newStr, startTime));
             }
         }
 
@@ -299,11 +307,11 @@ class WordamentSolver {
             for (let row = 0; row < matrix.length; row++) {
                 for (let col = 0; col < matrix[row].length; col++) {
                     if (algorithm === 'trie') {
-                        words.push(...this.findWordsTrie(matrix, [], row, col));
+                        words.push(...this.findWordsTrie(matrix, [], row, col, this.trie.root, ""));
                     } else if (algorithm === 'binary_search') {
-                        words.push(...this.findWordsBinarySearch(matrix, [], row, col));
+                        words.push(...this.findWordsBinarySearch(matrix, [], row, col, ""));
                     } else if (algorithm === 'brute_force') {
-                        words.push(...this.findWordsBruteForce(matrix, [], row, col, startTime));
+                        words.push(...this.findWordsBruteForce(matrix, [], row, col, "", startTime));
                     }
                 }
             }
