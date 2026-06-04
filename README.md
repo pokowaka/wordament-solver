@@ -156,7 +156,7 @@ python -m unittest tests/test_solver.py
 ```
 ## Contributing
 
-1. Fork it ( https://github.com/pokowaka/wordament)
+1. Fork it ( https://github.com/pokowaka/wordament-solver)
 2. Create your feature branch (`git checkout -b my-new-feature`)
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
