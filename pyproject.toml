@@ -19,3 +19,6 @@ classifiers = [
 
 [tool.setuptools.packages.find]
 include = ["wordament*"]
+
+[project.scripts]
+wordament = "wordament.__main__:main"

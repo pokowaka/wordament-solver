@@ -87,14 +87,69 @@ pip install .
 
 ## Usage
 
-TODO: Write usage instructions here
+### Command Line Interface
+
+You can run the solver directly from the command line:
+
+```bash
+python -m wordament "board_string" [options]
+```
+
+#### Examples
+
+1. **Solve a basic board:**
+   ```bash
+   python -m wordament "hell aloo"
+   ```
+
+2. **Solve a board and sort results by score:**
+   ```bash
+   python -m wordament "hell aloo" --sort-by-score
+   ```
+
+3. **Use a custom dictionary and Dutch scoring:**
+   ```bash
+   python -m wordament "hell aloo" -d path/to/dutch.txt -l dutch
+   ```
+
+4. **Passing rows as separate arguments:**
+   ```bash
+   python -m wordament hell aloo
+   ```
+
+#### Options
+
+* `board`: The Wordament board. Specify as space-separated rows. You can pass them as a single quoted string or as multiple arguments.
+* `-d`, `--dict`: Path to a custom dictionary text file (one word per line).
+* `-l`, `--lang`: Language scoring system to use (`english` or `dutch`). Default is `english`.
+* `--sort-by-score`: Sort the found words by their score in descending order (highest score first).
+
+### Programmatic Usage
+
+You can also use the solver in your Python code:
+
+```python
+from wordament import Wordament
+
+# Initialize with default English dictionary
+solver = Wordament()
+
+# Solve a board
+words = solver.solve("hell aloo")
+print(f"Found {len(words)} words.")
+
+# Calculate score of a word
+score = solver.score("hello")
+print(f"Score of 'hello': {score}")
+```
 
 ## Development
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `bin/console` for an interactive prompt that will allow you to experiment.
+After checking out the repo, you can run the tests using:
 
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release` to create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
-
+```bash
+python -m unittest tests/test_solver.py
+```
 ## Contributing
 
 1. Fork it ( https://github.com/pokowaka/wordament)
