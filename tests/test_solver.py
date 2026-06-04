@@ -37,16 +37,15 @@ class TestWordament(unittest.TestCase):
     def test_find_words(self):
         m = [['h', 'e', 'l', 'l', 'o']]
         found = self.solver.find_words(m, [], 0, 0)
-        self.assertEqual(found, ['h', 'he', 'hel', 'hell', 'hello'])
+        self.assertEqual(found, ['hell', 'hello'])
 
     def test_solve_prefix_tile(self):
         self.assertEqual(self.solver.solve('mo(v-)ie'), ['vie'])
 
     def test_solve_simple(self):
         words = self.solver.solve('hell aloo')
-        expected = ['hel', 'hell', 'hello', 'helo', 'heal', 'hela', 'heo', 'hae', 'hale', 'hall', 'halloo', 'halo',
-                    'ell', 'ela', 'lea', 'leal', 'leo', 'loe', 'lolo', 'loo', 'loll', 'ale', 'all', 'allo', 'alloo',
-                    'alo', 'aloe', 'lah', 'olea', 'olla', 'ola', 'oleo']
+        expected = ['hell', 'hello', 'helo', 'heal', 'hae', 'hale', 'hall', 'hallo', 'halloo', 'halo',
+                    'ell', 'lea', 'leal', 'loo', 'loll', 'ale', 'all', 'aloe', 'lah', 'ole', 'olea', 'olla', 'oleo']
         self.assertEqual(words, expected)
 
     def test_solve_suffix_tile(self):
@@ -59,6 +58,19 @@ class TestWordament(unittest.TestCase):
         # This would crash with IndexError before the fix
         words = self.solver.solve('abc de')
         self.assertIsInstance(words, list)
+
+    def test_solve_dutch(self):
+        import os
+        from wordament import DUTCH_SCORE
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        dutch_dict = os.path.join(current_dir, '..', 'config', 'dutch.txt')
+        dutch_solver = Wordament(dictionary_file=dutch_dict, points=DUTCH_SCORE)
+        words = dutch_solver.solve('wijn fles')
+        self.assertIn('wijn', words)
+        self.assertIn('fles', words)
+        self.assertIn('lijn', words)
+        self.assertIn('snel', words)
+        self.assertTrue(all(len(w) > 2 for w in words))
 
 if __name__ == '__main__':
     unittest.main()
