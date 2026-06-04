@@ -2,7 +2,7 @@
 
 This is wordament solver allows you to solve the wordament game. It
 heavily relies on a dictionary of words that can be found in
-config/english.json
+config/english.txt
 
 If the wordament board looks as follows:
 
@@ -16,9 +16,9 @@ If the wordament board looks as follows:
 
 You can solve it using:
 
-```ruby
-require 'wordament'
-game = Wordament::Wordament.new
+```python
+from wordament import Wordament
+game = Wordament()
 game.solve('idoo aler lten ad(ss)m')
 ```
 Resulting in 393 words:
@@ -79,19 +79,11 @@ followed by n. Hence those paths will not be explored.
 
 ## Installation
 
-Add this line to your application's Gemfile:
+Install the package locally:
 
-```ruby
-gem 'wordament'
+```bash
+pip install .
 ```
-
-And then execute:
-
-    $ bundle
-
-Or install it yourself as:
-
-    $ gem install wordament
 
 ## Usage
 
