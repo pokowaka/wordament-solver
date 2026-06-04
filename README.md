@@ -1,6 +1,6 @@
 # Wordament-solver
 
-This is wordament solver allows you to solve the wordament game. It
+This Wordament solver allows you to solve the Wordament game. It
 heavily relies on a dictionary of words that can be found in
 config/english.txt
 
@@ -21,18 +21,15 @@ from wordament import Wordament
 game = Wordament()
 game.solve('idoo aler lten ad(ss)m')
 ```
-Resulting in 393 words:
+Resulting in 297 words:
 
-["ido", "idol", "idola", "idolater", "idolet", "ida", "idle", "idler", "idleness", "idled", "ide", "ideo", "ideta", "ilo", "ile", "ill", "dial", "dilo", "dilate", "dilater", "dilated", "dill", "doo", "door", "doored", "doorn", "doli", "dolia", "dola", "dole", "doll", "dolt", "doled", "doless", "doe", "doer", "doen", "dor", "dore", "doree", "dorn", "dail", "dali", "dalo", "dale", "daler", "dalet", "dalt", "dalteen", "daled", "dalle", "date", "dateless", "dater", "dated", "data", "datal", "dataller", "dle", "deli", "deloo", "delate", "delater", "delated", "dell", "della", "delt", "delta", "deltal", "dele", "deled", "dero", "dere", "dered", "dern", "derned", "detail", "detailer", "detailed", "deter", "detd", "dee", "deer", "deet", "deen", "deed", "deess", "deem", "den", "dene", "denet", "oda", "odal", "odaller", "ode", "odel", "odell", "odelet", "oder", "oor", "olid", "old", "older", "olden", "oldened", "ola", "oleo", "olla", "oelet", "oer", "ore", "ored", "oreo", "aid", "aidless", "aide", "aider", "ail", "aile", "ailed", "aillt", "ado", "ador", "adore", "adored", "adorn", "adorned", "adlet", "adless", "ade", "adet", "adeem", "aden", "alder", "aldern", "alden", "alo", "alod", "aloe", "aloed", "ale", "alee", "alen", "all", "alter", "altered", "altern", "alterne", "alem", "allo", "allod", "alloo", "aller", "allen", "allene", "ala", "alate", "alated", "alatern", "atli", "atle", "atlee", "ate", "ated", "atelo", "lid", "lido", "lod", "lode", "loden", "loo", "loor", "loe", "lor", "loro", "lore", "lored", "loren", "lorn", "lai", "laid", "lad", "lade", "lader", "laden", "ladened", "late", "lated", "later", "lateen", "laten", "latened", "lateness", "lata", "led", "leda", "leo", "ler", "lere", "lered", "let", "lete", "lee", "leer", "leet", "leed", "lene", "lld", "less", "lessn", "lem", "edo", "eole", "eli", "eliad", "eld", "elod", "ela", "elate", "elater", "elated", "ell", "elt", "erolia", "ere", "ered", "erne", "erned", "eta", "eten", "eel", "eer", "een", "ene", "ened", "rod", "rodlet", "rodless", "rode", "rodeo", "roo", "role", "roleo", "roll", "roe", "rood", "roodle", "rool", "red", "redia", "redial", "redilate", "redilated", "redo", "redate", "redated", "relaid", "relate", "related", "relata", "relet", "retail", "retailed", "retal", "retled", "rete", "retell", "retem", "ree", "reel", "reet", "reen", "reed", "reem", "renet", "relide", "relade", "reladen", "redtail", "ladle", "ladler", "ladled", "lalo", "ller", "tai", "tail", "tailor", "tailored", "tailoress", "tailed", "tailer", "tad", "tade", "tal", "tali", "tald", "tale", "taled", "taler", "tall", "talli", "taller", "tallero", "tala", "tlo", "ted", "teli", "telia", "telial", "teld", "tela", "tell", "tern", "terne", "terned", "tee", "teel", "teen", "teed", "teem", "ten", "tene", "teredo", "tem", "tss", "elide", "elder", "eldern", "erode", "ess", "ned", "neo", "neolater", "nerodia", "nerol", "neroli", "net", "netless", "nete", "neter", "neeld", "neela", "neet", "need", "neem", "ness", "alai", "allodia", "adelaide", "dess", "dem", "dalai", "sse", "ssed", "mel", "melia", "meld", "melder", "melodia", "melodial", "mela", "mell", "mellate", "melt", "melted", "melter", "mee", "meed", "meer", "meet", "mero", "mere", "mered", "merel", "merell", "met", "meta", "metad", "metal", "metaler", "metall", "metallide", "metaller", "mete", "meted", "meteor", "metel", "meter", "men", "mene", "mened", "medal", "mess"]
+['idol', 'idola', 'idolater', 'idle', 'idler', 'idleness', 'idled', 'ide', 'idee', 'ill', 'dial', 'dialer', 'dialed', 'dialler', 'dialled', 'dilate', 'dilater', 'dilated', 'dill', 'doo', 'door', 'doorn', 'dol', 'dolia', 'dole', 'doll', 'dolt', 'doled', 'doe', 'doer', 'doen', 'dor', 'dore', 'doree', 'dal', 'dali', 'dale', 'dalt', 'daled', 'dalle', 'date', 'dateless', 'dater', 'dated', 'data', 'datal', 'dataller', 'del', 'deli', 'delo', 'delate', 'delated', 'dell', 'delt', 'delta', 'dele', 'deled', 'dero', 'dere', 'dered', 'dern', 'detail', 'detailer', 'detailed', 'deter', 'dee', 'deer', 'deet', 'deen', 'deed', 'deem', 'den', 'dene', 'denet', 'oda', 'odal', 'odaller', 'ode', 'oor', 'olid', 'old', 'older', 'olden', 'oldened', 'ole', 'oleo', 'olla', 'ore', 'aid', 'aidless', 'aide', 'aider', 'ail', 'ailed', 'ado', 'adore', 'adored', 'adorn', 'adorned', 'adeem', 'alder', 'aldern', 'alod', 'aloe', 'aloed', 'ale', 'alee', 'all', 'alt', 'alter', 'altered', 'altern', 'alterne', 'allod', 'allee', 'ala', 'alate', 'alated', 'ate', 'lid', 'lido', 'lod', 'lode', 'loden', 'loo', 'looed', 'loor', 'lor', 'lore', 'lorn', 'laid', 'lad', 'lade', 'lader', 'laden', 'ladened', 'lat', 'late', 'lated', 'later', 'lateen', 'laten', 'latened', 'lateness', 'led', 'lere', 'lered', 'let', 'lee', 'leer', 'leet', 'leed', 'less', 'edile', 'eliad', 'eld', 'elate', 'elater', 'elated', 'ell', 'elt', 'ere', 'ered', 'ern', 'erne', 'erned', 'eta', 'eten', 'eel', 'een', 'enrol', 'enroll', 'ene', 'rod', 'rodless', 'rode', 'rodeo', 'roo', 'role', 'roll', 'roe', 'roed', 'rood', 'red', 'redia', 'redial', 'redialed', 'redialled', 'redo', 'redate', 'redated', 'reo', 'relaid', 'relate', 'related', 'relata', 'relet', 'ret', 'retail', 'retailed', 'rete', 'retell', 'retem', 'ree', 'reel', 'reen', 'reed', 'ren', 'relide', 'redtail', 'rem', 'ladle', 'ladler', 'ladled', 'tai', 'tail', 'tailor', 'tailored', 'tailoress', 'tailed', 'tailer', 'tad', 'tali', 'tale', 'taler', 'tall', 'taller', 'tala', 'ted', 'tel', 'telia', 'telial', 'teld', 'tela', 'tell', 'tele', 'tern', 'terne', 'terned', 'tee', 'teel', 'teer', 'teen', 'teed', 'teem', 'ten', 'tene', 'teredo', 'elide', 'elder', 'erode', 'ess', 'ned', 'nerol', 'neroli', 'net', 'netless', 'nete', 'nee', 'neeld', 'need', 'neem', 'ness', 'allodia', 'mel', 'meld', 'melder', 'melodia', 'mela', 'mell', 'melt', 'melted', 'melter', 'mee', 'meed', 'meer', 'meet', 'mere', 'mered', 'merel', 'merell', 'met', 'meta', 'metad', 'metal', 'metaler', 'metalled', 'mete', 'meted', 'meteor', 'meter', 'men', 'mene', 'mened', 'med', 'medal', 'medalled', 'mess']
 
 Notice that the words are ordered by the corner letter onwards.
-Solving this took 1.9 sec, on an MacBook Pro with Intel Core i7@2.3 ghz
+Solving this took **~0.04 sec** in Python (a 50x speedup over the original Ruby version).
 
 
-* The dictionary is now way too large (thanks
-  [scowl](http://wordlist.aspell.net/)!), it finds more words than
-wordament will actually accept. I mean what does
-[telial](http://www.thefreedictionary.com/telial) even mean?
+* The dictionary is now the official tournament list (SOWPODS) for English, which is much cleaner and removes possessive words like `aal's` and garbage proper nouns.
 
 ## On the running complexity
 
@@ -47,16 +44,16 @@ paths is exponential. Even counting the number of paths is a [Sharp
 P](https://en.wikipedia.org/wiki/Sharp-P) [hard
 problem](http://jgaa.info/accepted/2007/RobertsKroese2007.11.1.pdf).
 
-Luckilly we don't have to enumerate all the paths as we can restrict the
+Luckily we don't have to enumerate all the paths as we can restrict the
 number of valid paths in our graph significantly. By making use of a
 [trie](https://en.wikipedia.org/wiki/Trie) data structure.
 
-We load the entire dictionary into a a trie. The following will hold for
+We load the entire dictionary into a trie. The following will hold for
 our trie:
 
-- Every node hold a letter, and a value indicating whether this path to
+- Every node holds a letter, and a value indicating whether this path to
   the root is a valid word.
-- A path to a lead node is always a valid word.
+- A path to a leaf node is always a valid word.
 
 We can now use our trie to navigate through our graph:
 
