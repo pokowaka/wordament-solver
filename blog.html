@@ -319,7 +319,7 @@
                 </div>
                 <div class="concept-box warning">
                     <strong>Real-world VM Performance Note:</strong>
-                    When running both algorithms inside a web browser, you will notice that <em class="highlight">Binary Search DFS can solve the board faster than Trie DFS</em> (often ~15ms vs ~25ms)!
+                    When running both algorithms inside a web browser, you will notice that <em class="highlight">Binary Search DFS can solve the board faster than Trie DFS</em> on average!
                     <br><br>
                     This seems counter-intuitive based on Big-O analysis. However, it is caused by <strong>JavaScript engine internals (V8)</strong>:
                     <ul>
@@ -327,6 +327,8 @@
                         <li><strong>Binary Search Speed:</strong> Binary search performs string comparisons on a flat array. These comparisons (like <code>startsWith()</code>) are executed in compiled C++ code inside the V8 engine, which is highly optimized and has a much lower constant-factor overhead.</li>
                     </ul>
                     This demonstrates how compiler architecture and VM environments can sometimes flip theoretical complexity bounds in practice.
+                    <br><br>
+                    <strong>Input-Dependent Flips:</strong> Interestingly, the performance balance flips on grids with very deep path depths (like our demo board containing the 15-letter word <code>morphologically</code>). On these boards, the Trie actually wins (e.g. ~8ms vs ~10ms). As depth <code>d</code> increases, the extra <code>log N</code> factor of Binary Search (which does ~18 string comparison steps per lookup) starts to stack up, allowing the Trie's linear <code>O(d)</code> scaling to catch up and win.
                 </div>
 
 
