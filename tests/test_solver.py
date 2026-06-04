@@ -72,5 +72,23 @@ class TestWordament(unittest.TestCase):
         self.assertIn('snel', words)
         self.assertTrue(all(len(w) > 2 for w in words))
 
+    def test_custom_points_from_dict(self):
+        custom_points = {'H': 10, 'E': 2, 'L': 2, 'O': 2}
+        solver = Wordament(points=custom_points)
+        self.assertEqual(solver.score('hello'), 18)
+
+    def test_custom_points_from_file(self):
+        import tempfile
+        import json
+        import os
+        with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as f:
+            json.dump({'H': 5, 'E': 1, 'L': 1, 'O': 1}, f)
+            temp_path = f.name
+        try:
+            solver = Wordament(points=temp_path)
+            self.assertEqual(solver.score('hello'), 9)
+        finally:
+            os.remove(temp_path)
+
 if __name__ == '__main__':
     unittest.main()

@@ -30,6 +30,13 @@ def main():
         action='store_true',
         help="Sort the found words by their score in descending order."
     )
+    parser.add_argument(
+        '-p', '--points',
+        help=(
+            "Path to a JSON file containing custom letter point values, "
+            "or an inline JSON string (e.g., '{\"A\": 2, \"B\": 3}')."
+        )
+    )
 
     args = parser.parse_args()
 
@@ -37,7 +44,19 @@ def main():
     board_str = " ".join(args.board)
 
     # Determine scoring system
-    points = DUTCH_SCORE if args.lang == 'dutch' else ENGLISH_SCORE
+    points = None
+    if args.points:
+        import json
+        import os
+        if os.path.exists(args.points):
+            points = args.points
+        else:
+            try:
+                points = json.loads(args.points)
+            except json.JSONDecodeError:
+                parser.error("points must be a valid JSON file path or JSON string.")
+    else:
+        points = DUTCH_SCORE if args.lang == 'dutch' else ENGLISH_SCORE
 
     try:
         solver = Wordament(dictionary_file=args.dictionary, points=points)

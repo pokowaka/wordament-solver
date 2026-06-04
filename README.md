@@ -122,6 +122,7 @@ python -m wordament "board_string" [options]
 * `board`: The Wordament board. Specify as space-separated rows. You can pass them as a single quoted string or as multiple arguments.
 * `-d`, `--dict`: Path to a custom dictionary text file (one word per line).
 * `-l`, `--lang`: Language scoring system to use (`english` or `dutch`). Default is `english`.
+* `-p`, `--points`: Path to a JSON file containing custom letter point values, or an inline JSON string (e.g., `'{"A": 2, "B": 3}'`).
 * `--sort-by-score`: Sort the found words by their score in descending order (highest score first).
 
 ### Programmatic Usage
@@ -131,8 +132,14 @@ You can also use the solver in your Python code:
 ```python
 from wordament import Wordament
 
-# Initialize with default English dictionary
+# Initialize with default English dictionary and points
 solver = Wordament()
+
+# Or initialize with custom points dict
+solver_custom_dict = Wordament(points={'H': 10, 'E': 1, 'L': 1, 'O': 1})
+
+# Or load points from a JSON file
+solver_custom_file = Wordament(points='path/to/custom_points.json')
 
 # Solve a board
 words = solver.solve("hell aloo")

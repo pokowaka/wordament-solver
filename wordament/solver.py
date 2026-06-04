@@ -39,17 +39,24 @@ class Wordament:
         Args:
             dictionary_file: Path to the dictionary text file (one word per line).
                              Defaults to 'config/english.txt'.
-            points: Dict mapping uppercase letters to their point values.
+            points: Dict mapping uppercase letters to their point values,
+                    or a path to a JSON file containing the mapping.
                     Defaults to ENGLISH_SCORE.
         """
         if dictionary_file is None:
             current_dir = os.path.dirname(os.path.abspath(__file__))
             dictionary_file = os.path.join(current_dir, '..', 'config', 'english.txt')
+        
         if points is None:
             points = ENGLISH_SCORE
+        elif isinstance(points, str):
+            import json
+            with open(points, 'r', encoding='utf-8') as f:
+                points = json.load(f)
 
         self.trie = Trie()
-        self.points = points
+        # Normalize keys to uppercase
+        self.points = {k.upper(): v for k, v in points.items()}
 
         # Load dictionary
         if os.path.exists(dictionary_file):
