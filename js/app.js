@@ -31,19 +31,26 @@ const boardGrid = document.getElementById('board-grid');
 const solveBtn = document.getElementById('solve-btn');
 const clearBtn = document.getElementById('clear-btn');
 const langSelect = document.getElementById('lang-select');
+const algoSelect = document.getElementById('algo-select');
 const sortByScoreCheck = document.getElementById('sort-by-score');
 const resultsList = document.getElementById('results-list');
 const wordCountBadge = document.getElementById('word-count');
 const filterInput = document.getElementById('filter-input');
+const metricsRow = document.getElementById('metrics-row');
+const pathsCountBadge = document.getElementById('paths-count');
+const solveTimeBadge = document.getElementById('solve-time');
 
 // Initialize 4x4 Grid
 function initGrid() {
     boardGrid.innerHTML = '';
+    // Pre-fill board with a demo grid: morp wcih yago llol
+    const defaultLetters = ['m', 'o', 'r', 'p', 'w', 'c', 'i', 'h', 'y', 'a', 'g', 'o', 'l', 'l', 'o', 'l'];
     for (let i = 0; i < 16; i++) {
         const input = document.createElement('input');
         input.type = 'text';
         input.className = 'grid-cell';
         input.dataset.index = i;
+        input.value = defaultLetters[i];
         input.maxLength = 10;
         input.autocomplete = 'off';
         input.spellcheck = false;
@@ -256,17 +263,34 @@ function setupEvents() {
         if (!solver) return;
         
         const boardStr = getBoardString();
+        const algo = algoSelect.value;
         
         // Show loading in results during search
         resultsList.innerHTML = '<div class="results-placeholder"><p>Solving board...</p></div>';
+        metricsRow.style.display = 'none';
         
         // Use setTimeout to allow UI to render the placeholder
         setTimeout(() => {
             const t0 = performance.now();
-            lastSolvedWords = solver.solve(boardStr);
+            lastSolvedWords = solver.solve(boardStr, algo);
             const t1 = performance.now();
+            const elapsed = t1 - t0;
             
-            console.log(`Solved in ${(t1 - t0).toFixed(2)}ms`);
+            console.log(`Solved in ${elapsed.toFixed(2)}ms`);
+            
+            // Show metrics
+            metricsRow.style.display = 'flex';
+            pathsCountBadge.className = 'metric-badge';
+            pathsCountBadge.textContent = `Paths Explored: ${solver.stats.pathsExplored.toLocaleString()}`;
+            
+            if (solver.stats.timedOut) {
+                solveTimeBadge.className = 'metric-badge warning-badge';
+                solveTimeBadge.textContent = `Timed Out (>5s)`;
+            } else {
+                solveTimeBadge.className = 'metric-badge';
+                solveTimeBadge.textContent = `Time: ${elapsed.toFixed(2)}ms`;
+            }
+            
             renderWords(lastSolvedWords);
         }, 50);
     });
@@ -289,6 +313,7 @@ function setupEvents() {
         filterInput.value = '';
         filterInput.disabled = true;
         lastSolvedWords = [];
+        metricsRow.style.display = 'none';
         validateBoard();
         
         // Focus first cell

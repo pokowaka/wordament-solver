@@ -18,6 +18,9 @@
         <header class="app-header">
             <h1>Wordament Solver</h1>
             <p class="subtitle">Crack any board instantly using a Trie-backed DFS engine</p>
+            <nav class="header-nav">
+                <a href="blog.html" class="nav-link">How it Works (Algorithm Blog)</a>
+            </nav>
             <div id="status" class="status-indicator loading">
                 <span class="indicator-dot"></span>
                 <span class="status-text">Loading dictionaries...</span>
@@ -46,6 +49,15 @@
                         </select>
                     </div>
 
+                    <div class="control-group">
+                        <label for="algo-select">Search Algorithm</label>
+                        <select id="algo-select" class="styled-select">
+                            <option value="trie">Trie-Pruned DFS (Fastest)</option>
+                            <option value="binary_search">Binary Search DFS (Lexicographical)</option>
+                            <option value="brute_force">Brute Force DFS (No Pruning)</option>
+                        </select>
+                    </div>
+
                     <div class="control-group checkbox-group">
                         <input type="checkbox" id="sort-by-score" checked>
                         <label for="sort-by-score">Sort by Score</label>
@@ -63,6 +75,10 @@
                 <div class="results-header">
                     <h2>Found Words</h2>
                     <span id="word-count" class="badge">0 words</span>
+                </div>
+                <div class="metrics-row" id="metrics-row" style="display: none;">
+                    <span id="paths-count" class="metric-badge"></span>
+                    <span id="solve-time" class="metric-badge"></span>
                 </div>
                 
                 <div class="search-box">
@@ -82,7 +98,7 @@
     </main>
 
     <!-- Scripts -->
-    <script src="solver.js"></script>
-    <script src="app.js"></script>
+    <script src="js/solver.js"></script>
+    <script src="js/app.js"></script>
 </body>
 </html>
