@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wordament Solver - Interactive Board Solver</title>
+    <meta name="description" content="Solve Wordament boards instantly with this interactive, beautiful Trie-based solver. Supporting English and Dutch dictionaries.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="glass-bg"></div>
+    <main class="container">
+        <header class="app-header">
+            <h1>Wordament Solver</h1>
+            <p class="subtitle">Crack any board instantly using a Trie-backed DFS engine</p>
+            <div id="status" class="status-indicator loading">
+                <span class="indicator-dot"></span>
+                <span class="status-text">Loading dictionaries...</span>
+            </div>
+        </header>
+
+        <section class="solver-layout">
+            <!-- Left Side: Board Input -->
+            <div class="card board-card">
+                <h2>The Board</h2>
+                <p class="card-desc">Type letters in the 4x4 grid. Press Enter or click Solve. Use arrow keys to navigate.</p>
+                
+                <div class="grid-container">
+                    <!-- 16 inputs for 4x4 grid -->
+                    <div class="grid" id="board-grid">
+                        <!-- Will be populated dynamically via JavaScript for easier focus management -->
+                    </div>
+                </div>
+
+                <div class="controls">
+                    <div class="control-group">
+                        <label for="lang-select">Scoring</label>
+                        <select id="lang-select" class="styled-select">
+                            <option value="english">English (SOWPODS)</option>
+                            <option value="dutch">Dutch (OpenTaal)</option>
+                        </select>
+                    </div>
+
+                    <div class="control-group checkbox-group">
+                        <input type="checkbox" id="sort-by-score" checked>
+                        <label for="sort-by-score">Sort by Score</label>
+                    </div>
+
+                    <div class="button-row">
+                        <button id="clear-btn" class="btn btn-secondary">Clear</button>
+                        <button id="solve-btn" class="btn btn-primary" disabled>Solve Board</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Side: Results -->
+            <div class="card results-card">
+                <div class="results-header">
+                    <h2>Found Words</h2>
+                    <span id="word-count" class="badge">0 words</span>
+                </div>
+                
+                <div class="search-box">
+                    <input type="text" id="filter-input" placeholder="Filter words..." disabled>
+                </div>
+
+                <div class="results-container" id="results-list">
+                    <div class="results-placeholder">
+                        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <p>Fill in the board and click Solve to see results.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Scripts -->
+    <script src="solver.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
