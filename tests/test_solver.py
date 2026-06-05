@@ -54,6 +54,23 @@ class TestWordament(unittest.TestCase):
         non_end_ing = [w for w in words if 'ing' in w and not w.endswith('ing')]
         self.assertEqual(non_end_ing, [])
 
+    def test_solve_new_syntax(self):
+        # Test start letters (e-), end letters (-ed), and double letters (ss) without parenthesis
+        # using slash-separated space-separated format
+        words = self.solver.solve("v- i e r / d o o r / d o n t / a d ss m")
+        self.assertIn("vie", words)
+        self.assertIn("doss", words)
+        
+        # Test space-separated tiles for a 16-cell board
+        words2 = self.solver.solve("v- i e r d o o r d o n t a d ss m")
+        self.assertEqual(words, words2)
+
+        # Test suffix tiles (-ed)
+        words3 = self.solver.solve("l o o -ed / a l i r / l t i n / a t ss m")
+        self.assertIn("looed", words3)
+        non_end_ed = [w for w in words3 if 'ed' in w and not w.endswith('ed')]
+        self.assertEqual(non_end_ed, [])
+
     def test_solve_irregular_board(self):
         # This would crash with IndexError before the fix
         words = self.solver.solve('abc de')

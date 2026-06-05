@@ -26,6 +26,9 @@ ENGLISH_SCORE = {
     'Z': 8
 }
 
+NEIGHBORS = [(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1)]
+
+
 class Wordament:
     """
     Solves Wordament boards using Depth-First Search (DFS) pruned with a Trie.
@@ -107,91 +110,137 @@ class Wordament:
             val = val.translate(str.maketrans('', '', '()-'))
         return val
 
+    def _find_words_dfs(self, matrix, visited, row, col, trie_node, accumulated_str, found_words):
+        """
+        Internal recursive DFS helper to search the board using Trie transition pruning.
+        """
+        if (row < 0 or row >= len(matrix) or
+            col < 0 or col >= len(matrix[row]) or
+            (row, col) in visited):
+            return
+
+        char, suffix = matrix[row][col]
+
+        # Prefix tile constraint: e.g., '(v-)' must be the start of the word.
+        if char.endswith('-)') and accumulated_str:
+            return
+
+        # Trie transition
+        next_node = trie_node
+        for ch in suffix:
+            next_node = next_node.get(ch)
+            if not next_node:
+                return # Prune!
+
+        new_str = accumulated_str + suffix
+        if '$' in next_node:
+            found_words.append(new_str)
+
+        # Suffix tile constraint: e.g., '(-ing)' must be the end of the word.
+        if char.startswith('(-'):
+            return
+
+        visited.add((row, col))
+        for dr, dc in NEIGHBORS:
+            self._find_words_dfs(matrix, visited, row + dr, col + dc, next_node, new_str, found_words)
+        visited.remove((row, col))
+
     def find_words(self, matrix, path, row, col):
         """
         Recursive helper to perform DFS search starting from a cell.
-
-        Uses the Trie to prune paths that do not form valid prefixes.
-        Handles special tile constraints (prefixes and suffixes).
-
-        Args:
-            matrix: The board matrix.
-            path: List of (row, col) tuples representing the path traveled so far.
-            row: The row index of the current cell to visit.
-            col: The col index of the current cell to visit.
-
-        Returns:
-            A list of valid words found from this path.
+        Kept for backward compatibility.
         """
-        str_so_far = self.path_to_str(matrix, path)
+        is_pre_cleaned = isinstance(matrix[0][0], tuple) if matrix and matrix[0] else False
+        
+        if not is_pre_cleaned:
+            trans_table = str.maketrans('', '', '()-')
+            cleaned_matrix = []
+            for r in range(len(matrix)):
+                row_tiles = []
+                for c in range(len(matrix[r])):
+                    tile = matrix[r][c]
+                    cleaned = tile.translate(trans_table) if len(tile) > 1 else tile
+                    row_tiles.append((tile, cleaned))
+                cleaned_matrix.append(row_tiles)
+        else:
+            cleaned_matrix = matrix
 
-        # Prune if out of bounds, already visited, or not a valid prefix in Trie.
-        if (row < 0 or row >= len(matrix) or
-            col < 0 or col >= len(matrix[row]) or
-            (row, col) in path or
-            not self.trie.is_prefix(str_so_far)):
-            return []
-
-        char = matrix[row][col]
-
-        # Prefix tile constraint: e.g., '(v-)' must be the start of the word.
-        if char.endswith('-)') and len(path) > 0:
-            return []
-
-        new_path = path + [(row, col)]
-        new_str = str_so_far + self.get_chars(matrix, row, col)
-
+        visited = set(path)
+        accumulated_str = "".join(cleaned_matrix[r][c][1] for r, c in path)
+        
+        trie_node = self.trie.root
+        for ch in accumulated_str:
+            trie_node = trie_node.get(ch)
+            if not trie_node:
+                return []
+        
         words = []
-        if self.trie.has_word(new_str):
-            words.append(new_str)
-
-        # Suffix tile constraint: e.g., '(-ing)' must be the end of the word.
-        # Stop searching deeper from this tile.
-        if char.startswith('(-'):
-            return words
-
-        # Explore all 8 neighbors (diagonal, vertical, horizontal)
-        for rw in range(-1, 2):
-            for cl in range(-1, 2):
-                if rw == 0 and cl == 0:
-                    continue
-                words.extend(self.find_words(matrix, new_path, row + rw, col + cl))
-
+        self._find_words_dfs(cleaned_matrix, visited, row, col, trie_node, accumulated_str, words)
         return words
 
     def solve(self, board: str):
         """
         Solves a Wordament board.
 
-        The board string should be space-separated rows of tiles.
-        Example: 'hell aloo' representing:
-        h e
-        l l
-        a l
-        o o
+        The board string can be:
+        - space-separated rows of concatenated tiles (e.g. 'hell aloo' or 'idoo aler lten ad(ss)m')
+        - slash-separated rows of space-separated tiles (e.g. 'e- l o o / a l e r / l t e n / a d ss m')
+        - space-separated tiles for a 16-cell board (e.g. 'e- l o o a l e r l t e n a d ss m')
 
         Args:
-            board: A string representing the board, rows separated by whitespace.
+            board: A string representing the board.
 
         Returns:
             A list of unique, sorted (by search path), valid words with length > 2.
         """
-        words_list = board.strip().split()
-        matrix = []
-        for line in words_list:
-            # Match either special tiles like '(v-)', '(-ing)', '(co)' or single letters
-            tiles = re.findall(r'\(-?[a-z]+-?\)|[a-z]', line.lower())
-            if tiles:
-                matrix.append(tiles)
+        if '/' in board:
+            rows = board.strip().split('/')
+            matrix = []
+            for row in rows:
+                tiles = row.strip().split()
+                if tiles:
+                    matrix.append(tiles)
+        elif '\n' in board:
+            rows = board.strip().split('\n')
+            matrix = []
+            for row in rows:
+                tiles = row.strip().split()
+                if tiles:
+                    matrix.append(tiles)
+        else:
+            words_list = board.strip().split()
+            if len(words_list) == 16:
+                matrix = [words_list[i:i+4] for i in range(0, 16, 4)]
+            else:
+                matrix = []
+                for line in words_list:
+                    tiles = re.findall(r'\(-?[a-z]+-?\)|[a-z]', line.lower())
+                    if tiles:
+                        matrix.append(tiles)
 
         if not matrix or not matrix[0]:
             return []
 
+        # Normalize and pre-clean matrix tiles
+        trans_table = str.maketrans('', '', '()-')
+        cleaned_matrix = []
+        for r in range(len(matrix)):
+            row_tiles = []
+            for tile in matrix[r]:
+                tile_lower = tile.lower()
+                if not (tile_lower.startswith('(') and tile_lower.endswith(')')):
+                    if tile_lower.endswith('-') or tile_lower.startswith('-') or len(tile_lower) > 1:
+                        tile_lower = f"({tile_lower})"
+                cleaned = tile_lower.translate(trans_table)
+                row_tiles.append((tile_lower, cleaned))
+            cleaned_matrix.append(row_tiles)
+
         words = []
+        visited = set()
         # Start DFS search from every cell on the board
-        for row in range(len(matrix)):
-            for col in range(len(matrix[0])):
-                words.extend(self.find_words(matrix, [], row, col))
+        for row in range(len(cleaned_matrix)):
+            for col in range(len(cleaned_matrix[row])):
+                self._find_words_dfs(cleaned_matrix, visited, row, col, self.trie.root, "", words)
 
         # Remove duplicates while preserving insertion order (corresponds to search order)
         unique_words = list(dict.fromkeys(words))

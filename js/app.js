@@ -15,6 +15,39 @@ const DUTCH_SCORE = {
     'C': 5, 'W': 5, 'X': 8, 'Y': 8, 'Q': 10
 };
 
+const FREQUENCIES = {
+    english: [
+        'a','a','a','a','a','a','a','a','a','b','b','c','c','d','d','d','d',
+        'e','e','e','e','e','e','e','e','e','e','e','e','f','f','g','g','g',
+        'h','h','h','h','h','h','i','i','i','i','i','i','i','i','i','j','k',
+        'l','l','l','l','m','m','n','n','n','n','n','n','o','o','o','o','o',
+        'o','o','o','p','p','q','r','r','r','r','r','r','s','s','s','s','t',
+        't','t','t','t','t','t','t','t','u','u','u','u','v','v','w','w','x',
+        'y','y','z'
+    ],
+    dutch: [
+        'e','e','e','e','e','e','e','e','e','e','e','e','e','e','e','n','n',
+        'n','n','n','n','n','n','n','a','a','a','a','a','a','a','o','o','o',
+        'o','o','o','i','i','i','i','i','i','d','d','d','d','d','r','r','r',
+        'r','r','s','s','s','s','s','t','t','t','t','t','g','g','g','g','k',
+        'k','k','l','l','l','l','m','m','m','b','b','b','p','p','u','u','u',
+        'f','f','h','h','j','j','v','v','z','z','c','w','w','x','y','q'
+    ]
+};
+
+const SPECIAL_TILES = {
+    english: {
+        prefix: ['re-', 'de-', 'in-', 'un-', 'con-', 'pro-', 'ex-', 'e-', 'a-', 'co-'],
+        suffix: ['-ed', '-ing', '-er', '-es', '-ly', '-tion', '-est', '-y', '-al', '-ment'],
+        double: ['ss', 'ee', 'oo', 'll', 'tt', 'ff', 'pp', 'nn', 'cc', 'rr']
+    },
+    dutch: {
+        prefix: ['ge-', 'ver-', 'be-', 'ont-', 'her-', 'in-', 'op-', 'af-', 'a-', 'be-'],
+        suffix: ['-en', '-je', '-tje', '-de', '-te', '-er', '-ing', '-elijk', '-t', '-s'],
+        double: ['en', 'ee', 'oo', 'aa', 'uu', 'll', 'ss', 'tt', 'nn', 'kk']
+    }
+};
+
 let solver = null;
 let currentLanguage = 'english';
 let dictionaries = {
@@ -30,6 +63,7 @@ const statusText = statusDiv.querySelector('.status-text');
 const boardGrid = document.getElementById('board-grid');
 const solveBtn = document.getElementById('solve-btn');
 const clearBtn = document.getElementById('clear-btn');
+const randomBtn = document.getElementById('random-btn');
 const langSelect = document.getElementById('lang-select');
 const algoSelect = document.getElementById('algo-select');
 const sortByScoreCheck = document.getElementById('sort-by-score');
@@ -58,6 +92,63 @@ function initGrid() {
     }
 }
 
+// Randomize board cells
+function randomizeBoard() {
+    const lang = currentLanguage;
+    const freq = FREQUENCIES[lang] || FREQUENCIES.english;
+    const specials = SPECIAL_TILES[lang] || SPECIAL_TILES.english;
+    
+    // Step 1: Generate 16 random letters
+    const cells = [];
+    for (let i = 0; i < 16; i++) {
+        const idx = Math.floor(Math.random() * freq.length);
+        cells.push(freq[idx]);
+    }
+    
+    // Step 2: Decide and apply double letters (30% chance)
+    if (Math.random() < 0.3) {
+        const cellIdx = Math.floor(Math.random() * 16);
+        const doubleIdx = Math.floor(Math.random() * specials.double.length);
+        cells[cellIdx] = specials.double[doubleIdx];
+    }
+    
+    // Step 3: Decide and apply prefix tile (15% chance)
+    if (Math.random() < 0.15) {
+        const cellIdx = Math.floor(Math.random() * 16);
+        const prefixIdx = Math.floor(Math.random() * specials.prefix.length);
+        cells[cellIdx] = specials.prefix[prefixIdx];
+    }
+    
+    // Step 4: Decide and apply suffix tile (15% chance)
+    if (Math.random() < 0.15) {
+        const cellIdx = Math.floor(Math.random() * 16);
+        const suffixIdx = Math.floor(Math.random() * specials.suffix.length);
+        cells[cellIdx] = specials.suffix[suffixIdx];
+    }
+    
+    // Step 5: Fill in UI grid
+    const inputs = boardGrid.querySelectorAll('.grid-cell');
+    inputs.forEach((input, idx) => {
+        input.value = cells[idx];
+    });
+    
+    // Clear old results and validate the board
+    resultsList.innerHTML = `
+        <div class="results-placeholder">
+            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <p>Fill in the board and click Solve to see results.</p>
+        </div>
+    `;
+    wordCountBadge.textContent = '0 words';
+    filterInput.value = '';
+    filterInput.disabled = true;
+    lastSolvedWords = [];
+    metricsRow.style.display = 'none';
+    validateBoard();
+}
+
 // Check if all cells are filled to enable Solve button
 function validateBoard() {
     const inputs = boardGrid.querySelectorAll('.grid-cell');
@@ -74,16 +165,11 @@ function validateBoard() {
 // Get the board string formatted for the solver
 function getBoardString() {
     const inputs = boardGrid.querySelectorAll('.grid-cell');
-    let rows = [];
-    let currentRow = '';
-    inputs.forEach((input, idx) => {
-        currentRow += input.value.trim();
-        if ((idx + 1) % 4 === 0) {
-            rows.push(currentRow);
-            currentRow = '';
-        }
+    let cells = [];
+    inputs.forEach(input => {
+        cells.push(input.value.trim());
     });
-    return rows.join(' ');
+    return cells.join(' ');
 }
 
 // Load Dictionary
@@ -319,6 +405,11 @@ function setupEvents() {
         // Focus first cell
         const firstInput = boardGrid.querySelector('[data-index="0"]');
         if (firstInput) firstInput.focus();
+    });
+
+    // Randomize Board
+    randomBtn.addEventListener('click', () => {
+        randomizeBoard();
     });
 
     // Language selection

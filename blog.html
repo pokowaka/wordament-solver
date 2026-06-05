@@ -280,6 +280,21 @@
 
                 <p>
                     By doing this, the solver searches only <em class="highlight">~3,000 prefix paths</em> instead of 12 million. The state space collapses, which is why the solver takes only <em class="highlight">40 milliseconds</em>.
+            </section>
+ 
+            <!-- Wordament Special Tiles -->
+            <section class="blog-section">
+                <h2>Special Tiles: Prefixes, Suffixes &amp; Double Letters</h2>
+                <p>
+                    Wordament is not just about single-letter grids; it also features special tiles that add complexity and strategic depth:
+                </p>
+                <ul>
+                    <li><strong>Prefix Tiles (e.g., <code>e-</code> or <code>(e-)</code>)</strong>: These tiles must be the starting letters of a word. A word cannot navigate <em>through</em> or <em>into</em> a prefix tile; it must start there.</li>
+                    <li><strong>Suffix Tiles (e.g., <code>-ed</code> or <code>(-ed)</code>)</strong>: These tiles must be the ending letters of a word. Once the solver reaches a suffix tile, it logs the word (if valid) and immediately terminates that search path.</li>
+                    <li><strong>Double/Multi-letter Tiles (e.g., <code>ss</code> or <code>(ss)</code>)</strong>: These tiles represent multiple letters on a single cell. The solver treats them as a sequence of letters, transitioning through the Trie for all characters in the tile at once.</li>
+                </ul>
+                <p>
+                    To make grid input as frictionless as possible, the solver automatically normalizes unparenthesized shortcuts like <code>e-</code>, <code>-ed</code>, and <code>ss</code> to their standard formats (<code>(e-)</code>, <code>(-ed)</code>, and <code>(ss)</code>) during board parsing.
                 </p>
             </section>
 
