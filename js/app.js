@@ -51,8 +51,8 @@ const SPECIAL_TILES = {
 let solver = null;
 let currentLanguage = 'english';
 let dictionaries = {
-    english: { path: 'config/english.txt', points: ENGLISH_SCORE, loaded: false, text: '' },
-    dutch: { path: 'config/dutch.txt', points: DUTCH_SCORE, loaded: false, text: '' }
+    english: { path: 'config/english.txt', points: ENGLISH_SCORE, loaded: false, text: '', solverInstance: null },
+    dutch: { path: 'config/dutch.txt', points: DUTCH_SCORE, loaded: false, text: '', solverInstance: null }
 };
 
 let lastSolvedWords = [];
@@ -179,6 +179,10 @@ async function loadDictionary(lang) {
     if (dict.loaded) {
         statusDiv.className = 'status-indicator ready';
         statusText.textContent = `${lang.charAt(0).toUpperCase() + lang.slice(1)} dictionary loaded`;
+        
+        // Swap to the cached solver instance
+        solver = dict.solverInstance;
+        
         validateBoard();
         return;
     }
@@ -196,9 +200,12 @@ async function loadDictionary(lang) {
         statusDiv.className = 'status-indicator ready';
         statusText.textContent = `${lang.charAt(0).toUpperCase() + lang.slice(1)} dictionary ready`;
         
-        // Re-initialize solver for current language
-        solver = new WordamentSolver(dict.points);
-        solver.loadDictionary(dict.text);
+        // Re-initialize and cache the solver instance
+        dict.solverInstance = new WordamentSolver(dict.points);
+        dict.solverInstance.loadDictionary(dict.text);
+        
+        // Update the active solver reference
+        solver = dict.solverInstance;
         
         validateBoard();
     } catch (error) {
