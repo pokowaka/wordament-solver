@@ -429,7 +429,7 @@ body {
     font-size: 0.9rem;
     font-weight: 500;
     transition: all var(--transition-speed);
-    cursor: default;
+    cursor: pointer;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -711,4 +711,19 @@ body {
     color: var(--danger-color);
     background: rgba(239, 68, 68, 0.08);
     border-color: rgba(239, 68, 68, 0.2);
+}
+
+/* Highlight & Selection styles */
+.word-item.selected {
+    background: rgba(168, 85, 247, 0.25) !important;
+    border-color: #a855f7 !important;
+    color: #fff !important;
+    box-shadow: 0 0 10px rgba(168, 85, 247, 0.3);
+}
+
+.grid-cell.highlight-active {
+    border-color: #a855f7 !important;
+    box-shadow: 0 0 15px rgba(168, 85, 247, 0.5) !important;
+    background: rgba(168, 85, 247, 0.15) !important;
+    transform: scale(1.05);
 }

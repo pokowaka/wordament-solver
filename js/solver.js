@@ -350,6 +350,120 @@ class WordamentSolver {
         const unique = [...new Set(words)];
         return unique.filter(w => w.length > 2);
     }
+
+    /**
+     * Finds a path (sequence of cell indices 0-15) that forms the given word on the board.
+     * @param {string} boardStr - The board string.
+     * @param {string} word - The word to find the path for.
+     * @returns {number[]|null} Array of cell indices representing the path, or null if not found.
+     */
+    findPath(boardStr, word) {
+        const matrix = [];
+        const transRegex = /[()-]/g;
+        
+        let rows = [];
+        if (boardStr.includes('/')) {
+            rows = boardStr.trim().split(/\s*\/\s*/);
+        } else if (boardStr.includes('\n')) {
+            rows = boardStr.trim().split('\n');
+        } else {
+            const words = boardStr.trim().split(/\s+/);
+            if (words.length === 16) {
+                for (let i = 0; i < 16; i += 4) {
+                    rows.push(words.slice(i, i + 4).join(' '));
+                }
+            } else {
+                rows = words;
+            }
+        }
+
+        let numCols = 0;
+        for (let line of rows) {
+            let tiles = [];
+            if (line.trim().includes(' ')) {
+                tiles = line.trim().split(/\s+/);
+            } else {
+                const matches = line.toLowerCase().match(/\(-?[a-z]+-?\)|[a-z]/g);
+                if (matches) tiles = matches;
+            }
+
+            if (tiles.length > 0) {
+                const row = [];
+                for (let tile of tiles) {
+                    let tileLower = tile.toLowerCase();
+                    if (!(tileLower.startsWith('(') && tileLower.endsWith(')'))) {
+                        if (tileLower.endsWith('-') || tileLower.startsWith('-') || tileLower.length > 1) {
+                            tileLower = `(${tileLower})`;
+                        }
+                    }
+                    const cleaned = tileLower.length > 1 ? tileLower.replace(transRegex, '') : tileLower;
+                    row.push({ tile: tileLower, cleaned });
+                }
+                matrix.push(row);
+                numCols = Math.max(numCols, row.length);
+            }
+        }
+
+        if (matrix.length === 0) return null;
+
+        const visited = matrix.map(row => new Array(row.length).fill(false));
+        const path = [];
+
+        const dfs = (row, col, charIdx) => {
+            if (row < 0 || row >= matrix.length ||
+                col < 0 || col >= matrix[row].length ||
+                visited[row][col]) {
+                return false;
+            }
+
+            const cell = matrix[row][col];
+            const char = cell.tile;
+            const suffix = cell.cleaned;
+
+            if (char.endsWith('-)') && charIdx > 0) {
+                return false;
+            }
+
+            if (!word.startsWith(suffix, charIdx)) {
+                return false;
+            }
+
+            const nextCharIdx = charIdx + suffix.length;
+
+            if (char.startsWith('(-') && nextCharIdx < word.length) {
+                return false;
+            }
+
+            const cellIndex = row * numCols + col;
+            path.push(cellIndex);
+            visited[row][col] = true;
+
+            if (nextCharIdx === word.length) {
+                return true;
+            }
+
+            for (let i = 0; i < NEIGHBORS.length; i++) {
+                const [dr, dc] = NEIGHBORS[i];
+                if (dfs(row + dr, col + dc, nextCharIdx)) {
+                    return true;
+                }
+            }
+
+            path.pop();
+            visited[row][col] = false;
+            return false;
+        };
+
+        for (let r = 0; r < matrix.length; r++) {
+            for (let c = 0; c < matrix[r].length; c++) {
+                if (dfs(r, c, 0)) {
+                    return path;
+                }
+            }
+        }
+
+        return null;
+    }
 }
 
 // Export for module/browser usage

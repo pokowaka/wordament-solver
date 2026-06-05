@@ -145,6 +145,7 @@ function randomizeBoard() {
     filterInput.value = '';
     filterInput.disabled = true;
     lastSolvedWords = [];
+    stopHighlightAnimation();
     metricsRow.style.display = 'none';
     validateBoard();
 }
@@ -277,8 +278,78 @@ function renderWords(words) {
     }
 }
 
+let activeAnimationInterval = null;
+let activeAnimationTimeouts = [];
+
+function clearBoardHighlight() {
+    const inputs = boardGrid.querySelectorAll('.grid-cell');
+    inputs.forEach(input => {
+        input.classList.remove('highlight-active');
+    });
+}
+
+function stopHighlightAnimation() {
+    if (activeAnimationInterval) {
+        clearInterval(activeAnimationInterval);
+        activeAnimationInterval = null;
+    }
+    activeAnimationTimeouts.forEach(t => clearTimeout(t));
+    activeAnimationTimeouts = [];
+    clearBoardHighlight();
+}
+
+function startHighlightAnimation(path) {
+    stopHighlightAnimation();
+    
+    const inputs = boardGrid.querySelectorAll('.grid-cell');
+    const animate = () => {
+        clearBoardHighlight();
+        
+        path.forEach((cellIdx, stepIdx) => {
+            const timeout = setTimeout(() => {
+                const input = inputs[cellIdx];
+                if (input) {
+                    input.classList.add('highlight-active');
+                }
+            }, stepIdx * 250);
+            activeAnimationTimeouts.push(timeout);
+        });
+        
+        const totalDuration = path.length * 250;
+        const waitTimeout = setTimeout(() => {
+            clearBoardHighlight();
+        }, totalDuration + 2500); // Keep highlighted for 2.5 seconds
+        activeAnimationTimeouts.push(waitTimeout);
+    };
+
+    animate();
+    
+    const cycleDuration = path.length * 250 + 3000; // Total cycle duration (includes 500ms blank gap)
+    activeAnimationInterval = setInterval(animate, cycleDuration);
+}
+
 // Event Listeners setup
 function setupEvents() {
+    resultsList.addEventListener('click', (e) => {
+        const item = e.target;
+        if (!item.classList.contains('word-item')) return;
+        
+        // Remove selection from others
+        resultsList.querySelectorAll('.word-item.selected').forEach(el => el.classList.remove('selected'));
+        
+        item.classList.add('selected');
+        
+        const word = item.textContent.trim().toLowerCase();
+        const boardStr = getBoardString();
+        const path = solver.findPath(boardStr, word);
+        
+        if (path) {
+            startHighlightAnimation(path);
+        } else {
+            stopHighlightAnimation();
+        }
+    });
+
     // Focus navigation inside grid
     boardGrid.addEventListener('input', (e) => {
         const input = e.target;
@@ -353,6 +424,7 @@ function setupEvents() {
         
         // Show loading in results during search
         resultsList.innerHTML = '<div class="results-placeholder"><p>Solving board...</p></div>';
+        stopHighlightAnimation();
         metricsRow.style.display = 'none';
         
         // Use setTimeout to allow UI to render the placeholder
@@ -399,6 +471,7 @@ function setupEvents() {
         filterInput.value = '';
         filterInput.disabled = true;
         lastSolvedWords = [];
+        stopHighlightAnimation();
         metricsRow.style.display = 'none';
         validateBoard();
         
