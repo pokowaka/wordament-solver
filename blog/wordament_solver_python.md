@@ -1,5 +1,7 @@
 # Speeding up Wordament Solvers: Trie vs. Brute Force (100x Speedup in Python)
 
+> 💡 **Source Code**: The complete source code for this project is available in the [GitHub Repository](https://github.com/pokowaka/wordament-solver).
+
 Wordament is a fast-paced word search game by Microsoft played on a 4x4 grid of letters. The goal is to find as many words as possible by connecting neighboring tiles (horizontal, vertical, and diagonal) without reusing any tile in a single word.
 
 If you've ever tried to write a solver for it, you might have run into a common algorithmic bottleneck: **the sheer number of possible paths**. 
