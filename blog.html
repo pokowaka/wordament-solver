@@ -17,7 +17,7 @@
     <main class="container blog-container">
         <header class="app-header">
             <h1>Algorithm Deep Dive</h1>
-            <p class="subtitle">How to search 12 million paths in under 1ms</p>
+            <p class="subtitle">How to search 12 million paths in 1–2ms</p>
             <nav class="header-nav">
                 <a href="index.html" class="nav-link">← Back to Solver</a>
                 <a href="https://github.com/pokowaka/wordament-solver" class="nav-link" target="_blank" rel="noopener">
@@ -35,7 +35,7 @@
                     Wordament is a 4x4 grid word-search game where you connect adjacent letters to form words. While it looks simple, solving a board programmatically exposes a classic computer science problem: <span class="term" title="When the number of possible states or paths in a problem grows exponentially with its size.">state space search space explosion</span>. 
                 </p>
                 <p>
-                    A naive algorithm can take several seconds to solve a single board. By using proper algorithms and data structures, we can solve it in <em class="highlight">under a millisecond</em>, even inside a web browser. In this post, we'll analyze different search strategies and data structures, aimed at computer science students looking to understand how algorithmic efficiency beats brute-force computing.
+                    A naive algorithm can take several seconds to solve a single board. By using proper algorithms and data structures, we can solve it in <em class="highlight">1–2 milliseconds</em>, even inside a web browser. In this post, we'll analyze different search strategies and data structures, aimed at computer science students looking to understand how algorithmic efficiency beats brute-force computing.
                 </p>
             </section>
 
@@ -379,7 +379,7 @@
                                 <td>O(Pruned Paths &middot; L)</td>
                                 <td>O(V + d) <span class="dim">(Trie size)</span></td>
                                 <td>~150ms <span class="dim">(Tree build)</span></td>
-                                <td><strong>~0.8ms (JS)</strong></td>
+                                <td><strong>0.8 – 2.0ms (JS)</strong></td>
                             </tr>
                             <tr>
                                 <td>Sorted List DFS</td>
@@ -413,7 +413,7 @@
             <section class="blog-section">
                 <h2>Conclusion</h2>
                 <p>
-                    The Wordament solver shows that algorithmic design is the key to solving complex search spaces. By replacing a naive full tree search with a prefix-pruned backtracking search, we collapsed a search space of <em class="highlight">12 million paths down to just a few thousand</em>, resulting in a <em class="highlight">12,500x speedup</em> and making instant in-browser solving possible.
+                    The Wordament solver shows that algorithmic design is the key to solving complex search spaces. By replacing a naive full tree search with a prefix-pruned backtracking search, we collapsed a search space of <em class="highlight">12 million paths down to just a few thousand</em>, resulting in a <em class="highlight">10,000x speedup</em> and making instant in-browser solving possible.
                 </p>
             </section>
         </article>
