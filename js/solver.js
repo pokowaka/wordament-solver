@@ -221,8 +221,8 @@ class WordamentSolver {
     findWordsBruteForce(matrix, visited, row, col, accumulatedStr, startTime, foundWords) {
         this.stats.pathsExplored++;
 
-        // Safety timeout to prevent browser tab freeze (abort after 5 seconds)
-        if (performance.now() - startTime > 5000) {
+        // Safety timeout to prevent browser tab freeze (abort after 15 seconds)
+        if (performance.now() - startTime > 15000) {
             this.stats.timedOut = true;
             throw new Error("Timeout");
         }

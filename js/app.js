@@ -518,7 +518,7 @@ function setupEvents() {
             
             if (solver.stats.timedOut) {
                 solveTimeBadge.className = 'metric-badge warning-badge';
-                solveTimeBadge.textContent = `Timed Out (>5s)`;
+                solveTimeBadge.textContent = `Timed Out (>15s)`;
             } else {
                 solveTimeBadge.className = 'metric-badge';
                 solveTimeBadge.textContent = `Time: ${elapsed.toFixed(2)}ms`;
