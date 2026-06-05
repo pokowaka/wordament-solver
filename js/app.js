@@ -56,6 +56,7 @@ let dictionaries = {
 };
 
 let lastSolvedWords = [];
+let selectedCellIdx = null;
 
 // DOM Elements
 const statusDiv = document.getElementById('status');
@@ -146,6 +147,7 @@ function randomizeBoard() {
     filterInput.disabled = true;
     lastSolvedWords = [];
     stopHighlightAnimation();
+    clearCellSelection();
     metricsRow.style.display = 'none';
     validateBoard();
 }
@@ -335,6 +337,43 @@ function startHighlightAnimation(path) {
     activeAnimationInterval = setInterval(animate, cycleDuration);
 }
 
+function clearCellSelection() {
+    selectedCellIdx = null;
+    boardGrid.querySelectorAll('.grid-cell.cell-selected').forEach(el => el.classList.remove('cell-selected'));
+}
+
+function applyFilters() {
+    if (lastSolvedWords.length === 0) return;
+    
+    const filterText = filterInput.value.toLowerCase().trim();
+    const boardStr = getBoardString();
+    
+    let filtered = lastSolvedWords;
+    
+    // 1. Filter by selected cell
+    if (selectedCellIdx !== null) {
+        filtered = filtered.filter(word => {
+            const path = solver.findPath(boardStr, word);
+            return path && path.includes(selectedCellIdx);
+        });
+    }
+    
+    // 2. Filter by search text
+    if (filterText !== '') {
+        filtered = filtered.filter(word => word.includes(filterText));
+    }
+    
+    // Render
+    renderWords(filtered);
+    
+    // Update count badge
+    if (selectedCellIdx !== null || filterText !== '') {
+        wordCountBadge.textContent = `${filtered.length} / ${lastSolvedWords.length} words`;
+    } else {
+        wordCountBadge.textContent = `${lastSolvedWords.length} words`;
+    }
+}
+
 // Event Listeners setup
 function setupEvents() {
     resultsList.addEventListener('click', (e) => {
@@ -357,10 +396,38 @@ function setupEvents() {
         }
     });
 
+    // Click on a grid cell to filter words using that tile
+    boardGrid.addEventListener('click', (e) => {
+        const input = e.target;
+        if (!input.classList.contains('grid-cell')) return;
+        
+        // Only allow filtering if we have solved words
+        if (lastSolvedWords.length === 0) return;
+        
+        const cellIdx = parseInt(input.dataset.index);
+        
+        stopHighlightAnimation();
+        
+        if (selectedCellIdx === cellIdx) {
+            input.classList.remove('cell-selected');
+            selectedCellIdx = null;
+            applyFilters();
+        } else {
+            boardGrid.querySelectorAll('.grid-cell.cell-selected').forEach(el => el.classList.remove('cell-selected'));
+            input.classList.add('cell-selected');
+            selectedCellIdx = cellIdx;
+            applyFilters();
+        }
+    });
+
     // Focus navigation inside grid
     boardGrid.addEventListener('input', (e) => {
         const input = e.target;
         if (!input.classList.contains('grid-cell')) return;
+
+        // Clear highlight and cell selection on user edit
+        clearCellSelection();
+        stopHighlightAnimation();
 
         const val = input.value;
         const index = parseInt(input.dataset.index);
@@ -432,6 +499,7 @@ function setupEvents() {
         // Show loading in results during search
         resultsList.innerHTML = '<div class="results-placeholder"><p>Solving board...</p></div>';
         stopHighlightAnimation();
+        clearCellSelection();
         metricsRow.style.display = 'none';
         
         // Use setTimeout to allow UI to render the placeholder
@@ -479,6 +547,7 @@ function setupEvents() {
         filterInput.disabled = true;
         lastSolvedWords = [];
         stopHighlightAnimation();
+        clearCellSelection();
         metricsRow.style.display = 'none';
         validateBoard();
         
@@ -501,19 +570,13 @@ function setupEvents() {
     // Sorting toggle
     sortByScoreCheck.addEventListener('change', () => {
         if (lastSolvedWords.length > 0) {
-            renderWords(lastSolvedWords);
+            applyFilters();
         }
     });
 
     // Live word filtering
-    filterInput.addEventListener('input', (e) => {
-        const filterText = e.target.value.toLowerCase().trim();
-        if (filterText === '') {
-            renderWords(lastSolvedWords);
-        } else {
-            const filteredWords = lastSolvedWords.filter(w => w.includes(filterText));
-            renderWords(filteredWords);
-        }
+    filterInput.addEventListener('input', () => {
+        applyFilters();
     });
 }
 
